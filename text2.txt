@@ -1,0 +1,182 @@
+<div class="outer">
+  
+    <div class="text-container p-2">
+      <h1 class="text-white">Create A New Company</h1>
+    </div>
+    
+
+<form class="form-container p-3" [formGroup]="companyForm" style="background-color: #252839;">
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Company Name</mat-label>
+      <input matInput formControlName="companyName">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Company Alias</mat-label>
+      <input matInput formControlName="companyAlias">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="address">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Fax</mat-label>
+      <input matInput formControlName="fax">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+      <mat-error *ngIf="f()['email'].hasError('email')">Invalid email format</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Website</mat-label>
+      <input matInput formControlName="website">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Company Register No.</mat-label>
+      <input matInput formControlName="companyRegisterNo">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Is Active</mat-label>
+      <mat-select formControlName="isActive">
+        <mat-option value="1">Yes</mat-option>
+        <mat-option value="0">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Created By</mat-label>
+      <input matInput formControlName="createBy">
+    </mat-form-field>
+
+    
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Create Date</mat-label>
+      <input matInput [matDatepicker]="createDate" formControlName="createDate">
+      <mat-datepicker-toggle matSuffix [for]="createDate"></mat-datepicker-toggle>
+      <mat-datepicker #createDate></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Updated By</mat-label>
+      <input matInput formControlName="updateBy">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="f-w">
+      <mat-label>Update Date</mat-label>
+      <input matInput [matDatepicker]="updateDate" formControlName="updateDate">
+      <mat-datepicker-toggle matSuffix [for]="updateDate"></mat-datepicker-toggle>
+      <mat-datepicker #updateDate></mat-datepicker>
+    </mat-form-field>
+
+    <div class="f-w d-flex justify-content-between">
+        <button [disabled]="companyForm.invalid" mat-raised-button type="submit" color="accent" (click)="insert()"><mat-icon>save_alt</mat-icon>Save</button>
+
+       
+        <button mat-raised-button type="button" color="primary" (click)="resetForm()"><mat-icon>refresh</mat-icon>Reset</button>
+
+        <a mat-button [routerLink]="['/companyview']" (click)="onClose()" class="text-white"><mat-icon>arrow_back</mat-icon>Back to list</a>
+
+        
+    </div>
+</form>
+  
+</div>
+
+
+-------------------------------------------------------------
+
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { Company } from 'src/app/models/Company/company';
+import { CompanyService } from 'src/app/services/Company/company.service';
+import { MessageService } from 'src/app/services/Message/message.service';
+
+@Component({
+  selector: 'app-create-company',
+  templateUrl: './create-company.component.html',
+  styleUrls: ['./create-company.component.css']
+})
+export class CompanyCreateComponent implements OnInit {
+  companies: Company[] = [];
+  dataSource: MatTableDataSource<Company> = new MatTableDataSource(this.companies);
+  company: Company = new Company();
+  companyForm: FormGroup = new FormGroup({
+    companyName: new FormControl('', Validators.required),
+    companyAlias: new FormControl('', Validators.required),
+    address: new FormControl('', Validators.required),
+    phone: new FormControl('', Validators.required),
+    fax: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    website: new FormControl('', Validators.required),
+    companyRegisterNo: new FormControl('', Validators.required),
+    isActive: new FormControl('', Validators.required),
+    createBy: new FormControl('', Validators.required),
+    createDate: new FormControl('', Validators.required),
+    updateBy: new FormControl('', Validators.required),
+    updateDate: new FormControl('', Validators.required),
+  });
+
+  constructor(
+    private companySvc: CompanyService,
+    private notifySvc: MessageService,
+    private router: Router,
+    private dialogRef: MatDialogRef<CompanyCreateComponent>,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    // Manually detect changes after view has rendered
+    setTimeout(() => {
+      this.dataSource.data = this.companies;
+      this.cdr.detectChanges();
+    });
+  }
+
+  f() {
+    return this.companyForm.controls;
+  }
+
+  insert() {
+    if (this.companyForm.invalid) return;
+    this.company.companyName = this.f()['companyName'].value;
+    this.company.companyAlias = this.f()['companyAlias'].value;
+    this.company.address = this.f()['address'].value;
+    this.company.phone = this.f()['phone'].value;
+    this.company.fax = this.f()['fax'].value;
+    this.company.email = this.f()['email'].value;
+    this.company.website = this.f()['website'].value;
+    this.company.companyRegisterNo = this.f()['companyRegisterNo'].value;
+    this.company.isActive = this.f()['isActive'].value;
+    this.company.createBy = this.f()['createBy'].value;
+    this.company.createDate = this.f()['createDate'].value;
+    this.company.updateBy = this.f()['updateBy'].value;
+    this.company.updateDate = this.f()['updateDate'].value;
+    this.companySvc.createCompany(this.company).subscribe(
+      (r) => {
+        this.notifySvc.success('Data saved successfully!!!', 'DISMISS');
+        this.companyForm.reset({});
+        console.log(r);
+        this.dialogRef.close(this.company);
+      },
+      (err) => {
+        this.notifySvc.fail('Failed to save data!!!', 'DISMISS');
+      }
+    );
+  }
+
+  resetForm() {
+    this.companyForm.reset();
+  }
+
+  onClose(): void {
+    this.dialogRef.close();
+  }
+}
+

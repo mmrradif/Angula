@@ -5,11 +5,8 @@
     "\\src\\app",
     "\\src\\app\\Components",
     "\\src\\app\\Components\\view-employees",
-    "\\src\\app\\Models",
-    "\\src\\app\\Modules",
-    "\\src\\app\\Modules\\shared",
-    "\\src\\app\\Services"
+    "\\src\\app\\Models"
   ],
-  "SelectedNode": "\\src\\app\\Components\\view-employees\\view-employees.component.html",
+  "SelectedNode": "\\src\\app\\Models\\employee.ts",
   "PreviewInSolutionExplorer": false
 }
