@@ -183,3 +183,25 @@ employees: Employee[] = [];
   </div>
 </div>
 
+
+
+
+Angular cli ------------- npm install -g @angular/cli@14.x.x
+
+Add Bootstrap ------ npm install bootstrap
+        "styles": [
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+           ],
+           "scripts": [
+            "node_modules/bootstrap/dist/js/bootstrap.min.js"
+         ]
+
+
+Add Font-Awesome --- npm install --save @fortawesome/fontawesome-free
+@import '~@fortawesome/fontawesome-free/css/all.css';  ------------ style.css
+
+
+------------------------------>>> Restrcted -->> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+
+------------------------------>>>       1st-->> npm cache clean --force            2nd-->>     npm install --legacy-peer-deps
