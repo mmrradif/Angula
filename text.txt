@@ -1,0 +1,185 @@
+"styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+            ],
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
+----------------------------------------------------------- Modules
+
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ViewEmployeesComponent } from './Components/view-employees/view-employees.component';
+
+import { MatTableModule } from '@angular/material/table';
+import { HttpClientModule } from '@angular/common/http';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    ViewEmployeesComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatTableModule,
+    HttpClientModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatCardModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatToolbarModule
+
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+--------------------------------------------------------------------- Service
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Employee } from '../Models/employee';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class EmployeeService {
+
+  private baseUrl = 'http://localhost:5001/'
+
+  constructor(
+    private http: HttpClient
+  ) { }
+
+  getEmployee(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.baseUrl}api/Employee`);
+  }
+
+  getEmployeeById(id: number): Observable<Employee> {
+    return this.http.get<Employee>(`${this.baseUrl}api/Employee/${id}`);
+  }
+
+  createEmployee(employee: Employee): Observable<Employee> {
+    return this.http.post<Employee>(`${this.baseUrl}api/Employee/Create`, employee);
+  }
+
+  updateEmployee(employee: Employee): Observable<Employee> {
+    return this.http.put<Employee>(`${this.baseUrl}api/Employee/Update${employee.id}`, employee);
+  }
+
+  deleteEmployee(id: number): Observable<Employee> {
+    return this.http.delete<Employee>(`${this.baseUrl}api/Employee/${id}`);
+  }
+
+}
+
+--------------------------------------------------------------------- Routing
+{ path: 'employees', component: ViewEmployeesComponent, pathMatch: 'full' }
+
+-------------------------------------------------------------------- appComponent.html
+
+<div class="row">
+  <div class="col-12 p-3 d-flex justify-content-center">
+    <a class="btn btn-primary" routerLink="/employees">Employees</a>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
+
+---------------------------------------------------------------------  viewComponent.ts
+employees: Employee[] = [];
+  dataSource: MatTableDataSource<Employee> = new MatTableDataSource(this.employees);
+  columnList: string[] = ['firstName', 'lastName', 'birthDate', 'salary', 'isManager','actions'];
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+
+
+  constructor(
+    private dataSvc: EmployeeService
+  ) { }
+
+  ngOnInit(): void {
+    this.dataSvc.getEmployee().subscribe(x => {
+      this.employees = x;
+      this.dataSource.data = this.employees;
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+    });
+  }
+
+--------------------------------------------------------------------- viewComponent.html
+<div class="row m-5">
+  <div class="col-10 m-auto mat-elevation-z8">
+
+    <h2 class="text-center p-4">Employees</h2>
+
+    <mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.firstName}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.lastName}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="birthDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Birth Date </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.birthDate | date}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="salary">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Salary </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.salary}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="isManager">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Is Manager </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.isManager ? 'Yes' : 'No'}} </mat-cell>
+      </ng-container>
+
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="d-flex justify-content-center">Actions</mat-header-cell>
+
+        <mat-cell *matCellDef="let employee" Color="accent" class="d-flex justify-content-center">
+          <a><mat-icon>edit</mat-icon></a>
+          <button mat-icon-button Color="accent"><mat-icon>delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="columnList"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columnList;"></mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20, 40]" [pageSize]="5" showFirstLastButtons style="background-color: rgba(252, 254, 253, 0.3);"></mat-paginator>
+
+  </div>
+</div>
+

@@ -1,0 +1,55 @@
+
+
+<div class="row m-5">
+
+  <div class="col-10 m-auto mat-elevation-z8">
+
+    <h2 class="text-center p-4">Employees</h2>
+
+
+    <mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.firstName}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.lastName}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="birthDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Birth Date </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.birthDate | date}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="salary">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Salary </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.salary}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="isManager">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Is Manager </mat-header-cell>
+        <mat-cell *matCellDef="let employee"> {{employee.isManager ? 'Yes' : 'No'}} </mat-cell>
+      </ng-container>
+
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="d-flex justify-content-center">Actions</mat-header-cell>
+
+        <mat-cell *matCellDef="let employee" Color="accent" class="d-flex justify-content-center">
+          <a><mat-icon>edit</mat-icon></a>
+          <button mat-icon-button Color="accent"><mat-icon>delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="columnList"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columnList;"></mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20, 40]" [pageSize]="5" showFirstLastButtons style="background-color: rgba(252, 254, 253, 0.3);"></mat-paginator>
+
+  </div>
+
+</div>
